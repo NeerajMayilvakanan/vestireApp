@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "868687785894",
+    "project_id": "vestire-apparels",
+    "storage_bucket": "vestire-apparels.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:868687785894:android:3b17719a891f6f61b42967",
+        "android_client_info": {
+          "package_name": "com.example.vestire_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "868687785894-j4pgdom26o1dedkkpc0m878t47reteo7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDkBFbx4XT7fMKQHV35KH-tnZ6LDswLhOw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "868687785894-j4pgdom26o1dedkkpc0m878t47reteo7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
