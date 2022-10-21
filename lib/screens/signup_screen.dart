@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:vestire_app/res/auth_methods.dart';
 import 'package:vestire_app/utils/colors.dart';
 import 'package:vestire_app/widgets/text_field_input.dart';
 
@@ -15,8 +16,9 @@ class _SignupScreenState extends State<SignupScreen> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _name = TextEditingController();
   final TextEditingController _userType = TextEditingController();
+  final TextEditingController _phoneNumber = TextEditingController();
   String dropDownValue = "Salesman";
-  var items = ["Salesman", "Biller", "Dispatch", "StockAdder", "Customer"];
+  var items = ["Salesman", "Biller", "Dispatch", "StockAdder"];
   @override
   void dispose() {
     super.dispose();
@@ -24,8 +26,11 @@ class _SignupScreenState extends State<SignupScreen> {
     _passwordController.dispose();
     _name.dispose();
     _userType.dispose();
+    _phoneNumber.dispose();
   }
+  void selectImage(){
 
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,15 +44,35 @@ class _SignupScreenState extends State<SignupScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       mainAxisSize: MainAxisSize.max,
                       children: [
-                        //svg
-                        SvgPicture.asset(
-                          'asset/ic_instagram.svg',
+                        //png shop name
+                        Image.asset(
+                          'asset/images/vestire.png',
                           color: primaryColor,
-                          height: 64,
                         ),
                         const SizedBox(
                           height: 64,
                         ),
+                        //Circular Widget to accept and show our selected file
+                        Stack(
+                          children: [
+                            const CircleAvatar(
+                              radius: 64,
+                              backgroundImage: NetworkImage(
+                                  'https://images.unsplash.com/photo-1666003913960-a7fcbd9fd920?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1974&q=80'),
+                            ),
+                            Positioned(
+                                bottom: -10,
+                                left: 80,
+                                child: IconButton(
+                                  onPressed: selectImage,
+                                  icon: const Icon(Icons.add_a_photo),
+                                ))
+                          ],
+                        ),
+                        SizedBox(
+                          height: 30,
+                        ),
+                        //Text Field Name
                         TextFieldInput(
                             textEditingController: _name,
                             hintText: "Enter your name",
@@ -55,6 +80,7 @@ class _SignupScreenState extends State<SignupScreen> {
                         SizedBox(
                           height: 30,
                         ),
+                        // Text Field Email
                         TextFieldInput(
                             textEditingController: _emailController,
                             hintText: "Enter your email",
@@ -62,6 +88,15 @@ class _SignupScreenState extends State<SignupScreen> {
                         SizedBox(
                           height: 30,
                         ),
+                        // Phone Number
+                        TextFieldInput(
+                            textEditingController: _phoneNumber,
+                            hintText: "Enter your Phone Number",
+                            textInputType: TextInputType.number),
+                        SizedBox(
+                          height: 30,
+                        ),
+                        // Work of emolyee
                         Row(
                           // mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -86,6 +121,7 @@ class _SignupScreenState extends State<SignupScreen> {
                         SizedBox(
                           height: 30,
                         ),
+                        // Password
                         TextFieldInput(
                             textEditingController: _passwordController,
                             isPass: true,
@@ -95,7 +131,14 @@ class _SignupScreenState extends State<SignupScreen> {
                           height: 30,
                         ),
                         InkWell(
-                          onTap: () {},
+                          onTap: () async {
+                            String res = await AuthMethods().signUpUser(
+                                name: _name.text,
+                                email: _emailController.text,
+                                phoneNumber: _phoneNumber.text,
+                                workingType: dropDownValue,
+                                password: _passwordController.text);
+                          },
                           child: Container(
                             child: const Text('Create Account'),
                             width: double.infinity,
@@ -110,7 +153,7 @@ class _SignupScreenState extends State<SignupScreen> {
                           ),
                         ),
                         SizedBox(
-                          height: 15,
+                          height: 30,
                         ),
                       ]),
                 ),
