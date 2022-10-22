@@ -1,7 +1,10 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:vestire_app/res/auth_methods.dart';
 import 'package:vestire_app/utils/colors.dart';
+import 'package:vestire_app/utils/utils.dart';
 import 'package:vestire_app/widgets/text_field_input.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -17,8 +20,14 @@ class _SignupScreenState extends State<SignupScreen> {
   final TextEditingController _name = TextEditingController();
   final TextEditingController _userType = TextEditingController();
   final TextEditingController _phoneNumber = TextEditingController();
+  final TextEditingController _salary = TextEditingController();
+  final TextEditingController _address = TextEditingController();
+
   String dropDownValue = "Salesman";
   var items = ["Salesman", "Biller", "Dispatch", "StockAdder"];
+  Uint8List? _image;
+  bool _isLoading = false;
+
   @override
   void dispose() {
     super.dispose();
@@ -27,10 +36,39 @@ class _SignupScreenState extends State<SignupScreen> {
     _name.dispose();
     _userType.dispose();
     _phoneNumber.dispose();
+    _salary.dispose();
+    _address.dispose();
   }
-  void selectImage(){
 
+  void selectImage() async {
+    Uint8List im = await pickImage(ImageSource.gallery);
+    setState(() {
+      _image = im;
+    });
   }
+
+  void SignUpUser() async {
+    setState(() {
+      _isLoading = true;
+    });
+    String res = await AuthMethods().signUpUser(
+        name: _name.text,
+        email: _emailController.text,
+        phoneNumber: _phoneNumber.text,
+        workingType: dropDownValue,
+        password: _passwordController.text,
+        salary: _salary.text,
+        address: _address.text,
+        file: _image!);
+
+    setState(() {
+      _isLoading = false;
+    });
+    if (res != "success") {
+      showSnackBar(res, context);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -55,11 +93,16 @@ class _SignupScreenState extends State<SignupScreen> {
                         //Circular Widget to accept and show our selected file
                         Stack(
                           children: [
-                            const CircleAvatar(
-                              radius: 64,
-                              backgroundImage: NetworkImage(
-                                  'https://images.unsplash.com/photo-1666003913960-a7fcbd9fd920?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1974&q=80'),
-                            ),
+                            _image != null
+                                ? CircleAvatar(
+                                    radius: 64,
+                                    backgroundImage: MemoryImage(_image!),
+                                  )
+                                : const CircleAvatar(
+                                    radius: 64,
+                                    backgroundImage: NetworkImage(
+                                        'https://t4.ftcdn.net/jpg/00/64/67/63/360_F_64676383_LdbmhiNM6Ypzb3FM4PPuFP9rHe7ri8Ju.jpg'),
+                                  ),
                             Positioned(
                                 bottom: -10,
                                 left: 80,
@@ -92,7 +135,7 @@ class _SignupScreenState extends State<SignupScreen> {
                         TextFieldInput(
                             textEditingController: _phoneNumber,
                             hintText: "Enter your Phone Number",
-                            textInputType: TextInputType.number),
+                            textInputType: TextInputType.phone),
                         SizedBox(
                           height: 30,
                         ),
@@ -121,6 +164,22 @@ class _SignupScreenState extends State<SignupScreen> {
                         SizedBox(
                           height: 30,
                         ),
+                        //Salary
+                        TextFieldInput(
+                            textEditingController: _salary,
+                            hintText: "Enter the employee salary ",
+                            textInputType: TextInputType.number),
+                        SizedBox(
+                          height: 30,
+                        ),
+                        //Address
+                        TextFieldInput(
+                            textEditingController: _address,
+                            hintText: "Enter the employee address ",
+                            textInputType: TextInputType.streetAddress),
+                        SizedBox(
+                          height: 30,
+                        ),
                         // Password
                         TextFieldInput(
                             textEditingController: _passwordController,
@@ -131,16 +190,15 @@ class _SignupScreenState extends State<SignupScreen> {
                           height: 30,
                         ),
                         InkWell(
-                          onTap: () async {
-                            String res = await AuthMethods().signUpUser(
-                                name: _name.text,
-                                email: _emailController.text,
-                                phoneNumber: _phoneNumber.text,
-                                workingType: dropDownValue,
-                                password: _passwordController.text);
-                          },
+                          onTap: SignUpUser,
                           child: Container(
-                            child: const Text('Create Account'),
+                            child: _isLoading
+                                ? const Center(
+                                    child: CircularProgressIndicator(
+                                      color: primaryColor,
+                                    ),
+                                  )
+                                : const Text('Create Account'),
                             width: double.infinity,
                             alignment: Alignment.center,
                             padding: const EdgeInsets.symmetric(vertical: 12),

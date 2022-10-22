@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:vestire_app/res/auth_methods.dart';
+
 import 'package:vestire_app/utils/colors.dart';
+import 'package:vestire_app/utils/utils.dart';
 import 'package:vestire_app/widgets/text_field_input.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -13,12 +16,31 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  bool _isLoading = false;
 
   @override
   void dispose() {
     super.dispose();
     _emailController.dispose();
     _passwordController.dispose();
+  }
+
+  void loginUser() async {
+    setState(() {
+      _isLoading = true;
+    });
+    String res = await AuthMethods().loginUser(
+        email: _emailController.text, password: _passwordController.text);
+    setState(() {
+      _isLoading = false;
+    });
+
+    if (res == 'success') {
+      // Navigator.of(context).pushReplacement(
+      //     MaterialPageRoute(builder: (context) => const HomeScreen()));
+    } else {
+      showSnackBar(res, context);
+    }
   }
 
   @override
@@ -33,7 +55,7 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Container(),
             flex: 2,
           ),
-          
+
           Image.asset(
             'asset/images/vestire.png',
             color: primaryColor,
@@ -57,9 +79,15 @@ class _LoginScreenState extends State<LoginScreen> {
             height: 30,
           ),
           InkWell(
-            onTap: () {},
+            onTap: loginUser,
             child: Container(
-              child: const Text('Log in'),
+              child: _isLoading
+                  ? const Center(
+                      child: CircularProgressIndicator(
+                        color: primaryColor,
+                      ),
+                    )
+                  : const Text('Log in'),
               width: double.infinity,
               alignment: Alignment.center,
               padding: const EdgeInsets.symmetric(vertical: 12),

@@ -1,7 +1,7 @@
 # vestireApp
 
 Run Web
-flutter run -d chrome
+flutter run -d chrome --web-renderer html
 
 Open terminal app:
 alias android-avd="emulator -avd Nexus_5X_API_29_x86 &"
